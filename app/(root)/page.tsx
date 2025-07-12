@@ -7,7 +7,6 @@ import InterviewCard from "@/components/InterviewCard";
 import { getRandomInterviewCover } from "@/lib/utils";
 import { InterviewCardProps } from "@/types";
 
-
 const Page = () => {
   return (
     <>
@@ -48,4 +47,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default Page; 

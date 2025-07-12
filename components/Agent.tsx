@@ -1,5 +1,6 @@
 import Image from "next/image";
 import {cn} from "@/lib/utils";
+import { AgentProps } from "@/types";
 
 enum CallStatus {
     INACTIVE = 'INACTIVE',
@@ -8,9 +9,9 @@ enum CallStatus {
     FINISHED = 'FINISHED',
 }
 
-const Agent = ({ userName }: AgentProps) => {
-    const callStatus = CallStatus.FINISHED;
-    const isSpeaking = true;
+const Agent = ({ userName, userId, interviewId, feedbackId, type, questions }: AgentProps) => {
+    const callStatus = CallStatus.INACTIVE;
+    const isSpeaking = false;
     const messages = [
         'Whats your name?',
         'My name is John Doe, nice to meet you!'
@@ -46,20 +47,9 @@ const Agent = ({ userName }: AgentProps) => {
             )}
 
             <div className="w-full flex justify-center">
-                {callStatus !== 'ACTIVE' ? (
-                    <button className="relative btn-call">
-                        <span className={cn('absolute animate-ping rounded-full opacity-75', callStatus !=='CONNECTING' & 'hidden')}
-                             />
-
-                            <span>
-                                {callStatus === 'INACTIVE' || callStatus === 'FINISHED' ? 'Call' : '. . . '}
-                            </span>
-                    </button>
-                ) : (
-                    <button className="btn-disconnect">
-                        End
-                    </button>
-                )}
+                <button className="relative btn-call">
+                    <span>Call</span>
+                </button>
             </div>
         </>
     )
