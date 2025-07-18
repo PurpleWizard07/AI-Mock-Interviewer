@@ -41,21 +41,7 @@ export const getTechLogos = async (techArray: string[]) => {
   return results;
 };
 
-export function getRandomInterviewCover() {
-  // Placeholder: return a random cover image path from public/covers
-  const covers = [
-    "/covers/adobe.png",
-    "/covers/amazon.png",
-    "/covers/facebook.png",
-    "/covers/hostinger.png",
-    "/covers/pinterest.png",
-    "/covers/quora.png",
-    "/covers/reddit.png",
-    "/covers/skype.png",
-    "/covers/spotify.png",
-    "/covers/telegram.png",
-    "/covers/tiktok.png",
-    "/covers/yahoo.png",
-  ];
-  return covers[Math.floor(Math.random() * covers.length)];
-}
+export const getRandomInterviewCover = () => {
+  const randomIndex = Math.floor(Math.random() * interviewCovers.length);
+  return `/covers${interviewCovers[randomIndex]}`;
+};
