@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 import { cn } from "@/lib/utils";
-import { vapi, createInterviewAssistant } from "@/lib/vapi.sdk";
+import { vapi } from "@/lib/vapi.sdk";
 import { createFeedback } from "@/lib/actions/general.action";
 
 enum CallStatus {
@@ -27,15 +27,23 @@ interface AgentProps {
   feedbackId?: string;
   type: "generate" | "feedback";
   questions?: string[];
+  role?: string;
+  level?: string;
+  amount?: number;
+  techstack?: string[];
 }
 
 const Agent = ({
-  userName,
+  userName = "",
   userId,
   interviewId,
   feedbackId,
   type,
   questions,
+  role,
+  level,
+  amount,
+  techstack,
 }: AgentProps) => {
   const router = useRouter();
   const [callStatus, setCallStatus] = useState<CallStatus>(CallStatus.INACTIVE);
@@ -52,7 +60,12 @@ const Agent = ({
       setCallStatus(CallStatus.FINISHED);
     };
 
-    const onMessage = (message: any) => {
+    const onMessage = (message: {
+      type: string;
+      transcriptType?: string;
+      role: "user" | "system" | "assistant";
+      transcript?: string;
+    }) => {
       if (message.type === "transcript" && message.transcriptType === "final") {
         const newMessage: SavedMessage = {
           role: message.role,
@@ -135,10 +148,10 @@ const Agent = ({
         throw new Error("VAPI SDK not initialized");
       }
 
-      const assistantId = process.env.NEXT_PUBLIC_VAPI_ASSISTANT_ID;
-      if (!assistantId) {
+      const workflowId = process.env.NEXT_PUBLIC_VAPI_WORKFLOW_ID;
+      if (!workflowId) {
         throw new Error(
-          "Missing VAPI Assistant ID. Please check your .env.local file."
+          "Missing VAPI Workflow ID. Please check your .env.local file."
         );
       }
 
@@ -149,18 +162,27 @@ const Agent = ({
         );
       }
 
-      console.log("Starting VAPI call with:", { assistantId, questions });
+      console.log("Starting VAPI call with:", { workflowId, questions });
 
-      // Create a dynamic assistant with the specific questions
-      const dynamicAssistant = createInterviewAssistant(questions || []);
-
-      // Start the call with the dynamic assistant
-      await vapi.start(dynamicAssistant);
+      // Start the call with the workflow ID
+      // workflowId is required for Vapi SDK even if not in local types
+      await vapi.start({
+        // @ts-expect-error: workflowId is required for Vapi SDK but not in local types
+        workflowId: process.env.NEXT_PUBLIC_VAPI_WORKFLOW_ID,
+        variables: {
+          role: role,
+          type: type,
+          level: level,
+          amount: amount,
+          userid: userId || "",
+          techstack: techstack?.join(",") || undefined,
+        },
+      });
 
       setCallStatus(CallStatus.ACTIVE);
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : String(err);
       console.error("❌ vapi.start failed:", err);
-      const errorMessage = err.message || err.toString();
       alert(
         `VAPI Error:\n${errorMessage}\n\nPlease check your environment variables in .env.local file.`
       );
