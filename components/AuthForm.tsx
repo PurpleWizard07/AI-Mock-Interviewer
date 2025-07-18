@@ -8,7 +8,6 @@ import { auth } from "@/firebase/client";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signUp, signIn } from "@/lib/actions/auth.action";
 
 import {
   createUserWithEmailAndPassword,
@@ -17,9 +16,9 @@ import {
 
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import FormField from "./FormField";
 
-type FormType = "sign-in" | "sign-up";
+import { signIn, signUp } from "@/lib/actions/auth.action";
+import FormField from "./FormField";
 
 const authFormSchema = (type: FormType) => {
   return z.object({
@@ -82,15 +81,10 @@ const AuthForm = ({ type }: { type: FormType }) => {
           return;
         }
 
-        const result = await signIn({
+        await signIn({
           email,
           idToken,
         });
-
-        if (!result.success) {
-          toast.error(result.message);
-          return;
-        }
 
         toast.success("Signed in successfully.");
         router.push("/");

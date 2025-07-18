@@ -138,10 +138,6 @@
   * {
     @apply border-border outline-ring/50;
   }
-  html, body {
-    height: 100%;
-  }
-  
   body {
     @apply bg-background text-foreground;
   }
@@ -266,7 +262,7 @@
   }
 
   .root-layout {
-    @apply flex items-start max-w-7xl flex-col gap-12 my-12 px-16 max-sm:px-4 max-sm:my-8;
+    @apply flex mx-auto max-w-7xl flex-col gap-12 my-12 px-16 max-sm:px-4 max-sm:my-8;
   }
 
   .card-cta {

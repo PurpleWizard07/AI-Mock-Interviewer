@@ -2,7 +2,6 @@
 
 import { auth, db } from "@/firebase/admin";
 import { cookies } from "next/headers";
-import { SignUpParams, SignInParams, User } from "@/types";
 
 // Session duration (1 week)
 const SESSION_DURATION = 60 * 60 * 24 * 7;
@@ -80,13 +79,8 @@ export async function signIn(params: SignInParams) {
       };
 
     await setSessionCookie(idToken);
-    
-    return {
-      success: true,
-      message: "Signed in successfully.",
-    };
   } catch (error: any) {
-    console.error("Error signing in:", error);
+    console.log("");
 
     return {
       success: false,
